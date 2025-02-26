@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("drugstore-branch")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+482393bcb7b85d6757b1fd7529a8ed91e49bfc30")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e0c5be3bcac4b1301c0465b8be931f2111dc3d13")]
 [assembly: System.Reflection.AssemblyProductAttribute("drugstore-branch")]
 [assembly: System.Reflection.AssemblyTitleAttribute("drugstore-branch")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
