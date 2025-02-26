@@ -1,0 +1,6 @@
+@drugstore_branch_HostAddress = http://localhost:5027
+
+GET {{drugstore_branch_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
