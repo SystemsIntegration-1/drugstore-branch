@@ -22,21 +22,19 @@ namespace drugstore_branch.Infrastrucure.Repository
         {
             using var connection = GetConnection();
             var sql = @"
-        INSERT INTO orders (total_price) 
-        VALUES (@TotalPrice) 
-        RETURNING id, total_price, order_date";
-        
+                INSERT INTO orders (total_price)
+                VALUES (@TotalPrice)
+                RETURNING id, total_price, order_date";
             var insertedOrder = await connection.QuerySingleAsync<Order>(sql, new { entity.TotalPrice });
-    
             entity.Id = insertedOrder.Id;
             entity.OrderDate = insertedOrder.OrderDate;
-    
-            if (entity.Products != null && entity.Products.Count > 0)
+
+            if (entity.ProductQuantities != null && entity.ProductQuantities.Count > 0)
             {
-                foreach (var product in entity.Products)
+                foreach (var kvp in entity.ProductQuantities)
                 {
-                    var sqlRelation = "INSERT INTO order_products (order_id, product_id) VALUES (@OrderId, @ProductId)";
-                    await connection.ExecuteAsync(sqlRelation, new { OrderId = entity.Id, ProductId = product.Id });
+                    var sqlRelation = "INSERT INTO order_products (order_id, product_id, quantity) VALUES (@OrderId, @ProductId, @Quantity)";
+                    await connection.ExecuteAsync(sqlRelation, new { OrderId = entity.Id, ProductId = kvp.Key, Quantity = kvp.Value });
                 }
             }
             return entity;
@@ -50,12 +48,14 @@ namespace drugstore_branch.Infrastrucure.Repository
 
             foreach (var order in orders)
             {
-                var sqlProducts = @"SELECT p.* 
-                                    FROM products p
-                                    INNER JOIN order_products op ON p.id = op.product_id
-                                    WHERE op.order_id = @OrderId";
-                var products = await connection.QueryAsync<Product>(sqlProducts, new { OrderId = order.Id });
-                order.Products = products.AsList();
+                var sqlQuantities = "SELECT product_id, quantity FROM order_products WHERE order_id = @OrderId";
+                var orderProducts = await connection.QueryAsync<(Guid product_id, int quantity)>(sqlQuantities, new { OrderId = order.Id });
+                var dict = new Dictionary<Guid, int>();
+                foreach (var item in orderProducts)
+                {
+                    dict[item.product_id] = item.quantity;
+                }
+                order.ProductQuantities = dict;
             }
             return orders;
         }
@@ -65,18 +65,19 @@ namespace drugstore_branch.Infrastrucure.Repository
         public async Task<IEnumerable<Order>> SearchDbAsync(string parameter, object search)
         {
             using var connection = GetConnection();
-            // Se asume que 'parameter' viene en minúsculas y coincide con el de la base de datos
             string sql = $"SELECT * FROM orders WHERE {parameter} = @Search";
             var orders = await connection.QueryAsync<Order>(sql, new { Search = search });
 
             foreach (var order in orders)
             {
-                var sqlProducts = @"SELECT p.* 
-                                    FROM products p
-                                    INNER JOIN order_products op ON p.id = op.product_id
-                                    WHERE op.order_id = @OrderId";
-                var products = await connection.QueryAsync<Product>(sqlProducts, new { OrderId = order.Id });
-                order.Products = products.AsList();
+                var sqlQuantities = "SELECT product_id, quantity FROM order_products WHERE order_id = @OrderId";
+                var orderProducts = await connection.QueryAsync<(Guid product_id, int quantity)>(sqlQuantities, new { OrderId = order.Id });
+                var dict = new Dictionary<Guid, int>();
+                foreach (var item in orderProducts)
+                {
+                    dict[item.product_id] = item.quantity;
+                }
+                order.ProductQuantities = dict;
             }
             return orders;
         }

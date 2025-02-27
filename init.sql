@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS orders (
 CREATE TABLE IF NOT EXISTS order_products (
                                               order_id UUID NOT NULL,
                                               product_id UUID NOT NULL,
+                                              quantity INT NOT NULL DEFAULT 1,
                                               PRIMARY KEY (order_id, product_id),
     CONSTRAINT fk_order FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE,
     CONSTRAINT fk_product FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
@@ -47,8 +48,8 @@ INSERT INTO orders (total_price, order_date) VALUES
                                                  (109.99, now())
     ON CONFLICT DO NOTHING;
 
-INSERT INTO order_products (order_id, product_id)
-SELECT o.id, p.id
+INSERT INTO order_products (order_id, product_id, quantity)
+SELECT o.id, p.id, 1
 FROM orders o, products p
 WHERE o.id IN (SELECT id FROM orders LIMIT 3)
   AND p.id IN (SELECT id FROM products LIMIT 3)

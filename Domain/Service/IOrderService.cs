@@ -5,7 +5,7 @@ namespace drugstore_branch.Domain.Service;
 
 public interface IOrderService
 {
-    Task<OrderDto> CreateOrder(Order order);
+    Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto);
     Task<List<OrderDto>> GetAllOrders();
     Task<List<OrderDto>> GerAllOrdersByDate(DateTime date);
     Task<OrderDto> GetOrderById(Guid id);

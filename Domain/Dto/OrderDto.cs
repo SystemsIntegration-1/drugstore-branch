@@ -3,7 +3,7 @@
 public class OrderDto
 {
     public Guid Id { get; set; }
-    public List<Guid> ProductIds { get; set; } = new List<Guid>();
+    public Dictionary<Guid, int> ProductQuantities { get; set; } = new Dictionary<Guid, int>();
     public double TotalPrice { get; set; }
     public DateTime OrderDate { get; set; }
 }

@@ -1,59 +1,51 @@
 ﻿using AutoMapper;
 using drugstore_branch.Domain.Dto;
-using drugstore_branch.Domain.Model;
 using drugstore_branch.Domain.Service;
 using Microsoft.AspNetCore.Mvc;
 
-namespace drugstore_branch.Presentation;
-
-[ApiController]
-[Route("api/[controller]")]
-public class OrderController : ControllerBase
+namespace drugstore_branch.Presentation
 {
-    private readonly IOrderService _orderService;
-    private readonly IMapper _mapper;
-        
-    public OrderController(IOrderService orderService, IMapper mapper)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrderController : ControllerBase
     {
-        _orderService = orderService;
-        _mapper = mapper;
-    }
+        private readonly IOrderService _orderService;
+        private readonly IMapper _mapper;
         
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto createOrderDto)
-    {
-        var order = new Order
+        public OrderController(IOrderService orderService, IMapper mapper)
         {
-            TotalPrice = createOrderDto.TotalPrice,
-            Products = createOrderDto.ProductIds.Select(pid => new Product { Id = pid }).ToList()
-        };
-            
-        var createdOrderDto = await _orderService.CreateOrder(order);
-        return CreatedAtAction(nameof(GetOrderById), new { id = createdOrderDto.Id }, createdOrderDto);
-    }
-
-
+            _orderService = orderService;
+            _mapper = mapper;
+        }
         
-    [HttpGet]
-    public async Task<IActionResult> GetAllOrders()
-    {
-        var orders = await _orderService.GetAllOrders();
-        return Ok(orders);
-    }
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto createOrderDto)
+        {
+            var createdOrderDto = await _orderService.CreateOrder(createOrderDto);
+            return CreatedAtAction(nameof(GetOrderById), new { id = createdOrderDto.Id }, createdOrderDto);
+        }
         
-    [HttpGet("by-date")]
-    public async Task<IActionResult> GetOrdersByDate([FromQuery] DateTime date)
-    {
-        var orders = await _orderService.GerAllOrdersByDate(date);
-        return Ok(orders);
-    }
+        [HttpGet]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _orderService.GetAllOrders();
+            return Ok(orders);
+        }
         
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetOrderById(Guid id)
-    {
-        var order = await _orderService.GetOrderById(id);
-        if (order == null)
-            return NotFound();
-        return Ok(order);
+        [HttpGet("by-date")]
+        public async Task<IActionResult> GetOrdersByDate([FromQuery] DateTime date)
+        {
+            var orders = await _orderService.GerAllOrdersByDate(date);
+            return Ok(orders);
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(Guid id)
+        {
+            var order = await _orderService.GetOrderById(id);
+            if (order == null)
+                return NotFound();
+            return Ok(order);
+        }
     }
 }
