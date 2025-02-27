@@ -1,8 +1,6 @@
-using System;
+﻿namespace drugstore_branch.Domain.Dto;
 
-namespace drugstore_branch.Domain.Model;
-
-public class Order : IEntity
+public class OrderDto
 {
     public Guid Id { get; set; }
     public Dictionary<Guid, int> ProductQuantities { get; set; } = new Dictionary<Guid, int>();
