@@ -34,7 +34,7 @@ public class OrderService : IOrderService
         
     public async Task<List<OrderDto>> GerAllOrdersByDate(DateTime date)
     {
-        var orders = await _orderRepository.ReadAsync("OrderDate", date);
+        var orders = await _orderRepository.ReadAsync("order_date", date);
         return _mapper.Map<List<OrderDto>>(orders);
     }
         

@@ -20,15 +20,19 @@ public class OrderController : ControllerBase
     }
         
     [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] OrderDto orderDto)
+    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto createOrderDto)
     {
-        var order = _mapper.Map<Order>(orderDto);
-        order.Id = Guid.NewGuid();
-        order.Products = new List<Product>();
+        var order = new Order
+        {
+            TotalPrice = createOrderDto.TotalPrice,
+            Products = createOrderDto.ProductIds.Select(pid => new Product { Id = pid }).ToList()
+        };
             
         var createdOrderDto = await _orderService.CreateOrder(order);
         return CreatedAtAction(nameof(GetOrderById), new { id = createdOrderDto.Id }, createdOrderDto);
     }
+
+
         
     [HttpGet]
     public async Task<IActionResult> GetAllOrders()

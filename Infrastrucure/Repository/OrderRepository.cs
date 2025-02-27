@@ -13,6 +13,7 @@ namespace drugstore_branch.Infrastrucure.Repository
         public OrderRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 
         private NpgsqlConnection GetConnection() => new NpgsqlConnection(_connectionString);
@@ -20,10 +21,16 @@ namespace drugstore_branch.Infrastrucure.Repository
         public async Task<Order> Create(Order entity)
         {
             using var connection = GetConnection();
-            // Usamos nombres en minúsculas según la base de datos
-            var sql = "INSERT INTO orders (id, total_price, order_date) VALUES (@Id, @TotalPrice, @OrderDate)";
-            await connection.ExecuteAsync(sql, new { entity.Id, entity.TotalPrice, entity.OrderDate });
-
+            var sql = @"
+        INSERT INTO orders (total_price) 
+        VALUES (@TotalPrice) 
+        RETURNING id, total_price, order_date";
+        
+            var insertedOrder = await connection.QuerySingleAsync<Order>(sql, new { entity.TotalPrice });
+    
+            entity.Id = insertedOrder.Id;
+            entity.OrderDate = insertedOrder.OrderDate;
+    
             if (entity.Products != null && entity.Products.Count > 0)
             {
                 foreach (var product in entity.Products)
