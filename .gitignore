@@ -1,0 +1,76 @@
+﻿# Build files
+bin/
+obj/
+out/
+
+# Rider & JetBrains IDE settings
+.idea/
+*.sln.iml
+*.sln.DotSettings.user
+
+# Rider workspace and settings
+.idea/
+*.sln.DotSettings
+*.sln.DotSettings.user
+.idea_modules/
+*.ipr
+*.iws
+
+# User-specific Rider configs
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/httpRequests
+
+# Debugging
+.vscode/
+*.user
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+
+# Logs & Crash Reports
+hs_err_pid*
+*.log
+
+# Temporary files
+*.bak
+*.swp
+*.swn
+*.swo
+*.sublime-*
+*.tmp
+
+# Dependency files
+packages/
+*.nuget
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Resharper
+_ReSharper.Caches/
+resharper/
+
+# Dotnet
+*.db
+*.cache
+*.pdb
+
+# JetBrains Rider Plugin Settings
+.idea/workspace.xml
+.idea/libraries/
+.idea/modules.xml
+
+# Entity Framework Migrations
+Migrations/
+
+# Generated Code
+GeneratedFiles/
