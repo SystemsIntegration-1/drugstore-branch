@@ -1,56 +1,57 @@
-﻿CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+﻿-- Habilitar la extensión pgcrypto para generar UUIDs
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- Crear la tabla de productos
 CREATE TABLE IF NOT EXISTS products (
                                         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    shared_id UUID NOT NULL,
     name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    warehouse_location VARCHAR(255) NOT NULL,
+    price NUMERIC(10,2) NOT NULL DEFAULT 0
+    );
+
+-- Crear la tabla de lotes
+CREATE TABLE IF NOT EXISTS batches (
+                                       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id UUID NOT NULL,
     stock INT NOT NULL,
-    price NUMERIC(10,2) NOT NULL
+    entry_date BIGINT NOT NULL,
+    expiration_date BIGINT NOT NULL,
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     );
 
-CREATE TABLE IF NOT EXISTS orders (
-                                      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    total_price NUMERIC(10,2) NOT NULL,
-    order_date TIMESTAMP NOT NULL DEFAULT now()
-    );
+-- Insertar datos de prueba en productos
+INSERT INTO products (shared_id, name, description, category, warehouse_location, price)
+VALUES
+    (gen_random_uuid(), 'Paracetamol', 'Analgésico y antipirético', 'Medicamento', 'A1-03', 5.99),
+    (gen_random_uuid(), 'Ibuprofeno', 'Antiinflamatorio no esteroideo', 'Medicamento', 'B2-01', 7.50),
+    (gen_random_uuid(), 'Omeprazol', 'Inhibidor de la bomba de protones', 'Medicamento', 'C4-05', 10.25),
+    (gen_random_uuid(), 'Amoxicilina', 'Antibiótico de amplio espectro', 'Medicamento', 'D3-02', 12.75),
+    (gen_random_uuid(), 'Loratadina', 'Antihistamínico para alergias', 'Medicamento', 'E2-04', 8.90),
+    (gen_random_uuid(), 'Salbutamol', 'Broncodilatador para asma', 'Medicamento', 'F5-01', 15.30),
+    (gen_random_uuid(), 'Metformina', 'Antidiabético oral', 'Medicamento', 'G1-07', 9.99);
 
-CREATE TABLE IF NOT EXISTS order_products (
-                                              order_id UUID NOT NULL,
-                                              product_id UUID NOT NULL,
-                                              quantity INT NOT NULL DEFAULT 1,
-                                              PRIMARY KEY (order_id, product_id),
-    CONSTRAINT fk_order FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE,
-    CONSTRAINT fk_product FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
-    );
-
-INSERT INTO products (name, stock, price) VALUES
-                                              ('Product 1', 100, 9.99),
-                                              ('Product 2', 200, 19.99),
-                                              ('Product 3', 150, 14.99),
-                                              ('Product 4', 50, 29.99),
-                                              ('Product 5', 75, 24.99),
-                                              ('Product 6', 300, 4.99),
-                                              ('Product 7', 80, 39.99),
-                                              ('Product 8', 90, 11.99),
-                                              ('Product 9', 60, 49.99),
-                                              ('Product 10', 120, 7.99)
-    ON CONFLICT DO NOTHING;
-
-INSERT INTO orders (total_price, order_date) VALUES
-                                                 (59.97, now()),
-                                                 (39.98, now()),
-                                                 (19.99, now()),
-                                                 (99.95, now()),
-                                                 (49.95, now()),
-                                                 (29.97, now()),
-                                                 (89.99, now()),
-                                                 (79.95, now()),
-                                                 (69.95, now()),
-                                                 (109.99, now())
-    ON CONFLICT DO NOTHING;
-
-INSERT INTO order_products (order_id, product_id, quantity)
-SELECT o.id, p.id, 1
-FROM orders o, products p
-WHERE o.id IN (SELECT id FROM orders LIMIT 3)
-  AND p.id IN (SELECT id FROM products LIMIT 3)
-ON CONFLICT DO NOTHING;
+-- Insertar lotes para los productos creados
+INSERT INTO batches (product_id, stock, entry_date, expiration_date)
+SELECT id, 100, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '2 years')
+FROM products ORDER BY id LIMIT 1
+UNION ALL
+SELECT id, 50, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '1.5 years')
+FROM products ORDER BY id LIMIT 1 OFFSET 1
+UNION ALL
+SELECT id, 75, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '3 years')
+FROM products ORDER BY id LIMIT 1 OFFSET 2
+UNION ALL
+SELECT id, 120, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '2.5 years')
+FROM products ORDER BY id LIMIT 1 OFFSET 3
+UNION ALL
+SELECT id, 90, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '4 years')
+FROM products ORDER BY id LIMIT 1 OFFSET 4
+UNION ALL
+SELECT id, 30, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '1 year')
+FROM products ORDER BY id LIMIT 1 OFFSET 5
+UNION ALL
+SELECT id, 200, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '5 years')
+FROM products ORDER BY id LIMIT 1 OFFSET 6;
