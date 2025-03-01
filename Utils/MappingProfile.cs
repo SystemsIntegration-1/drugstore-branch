@@ -9,8 +9,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<Order, OrderDto>()
-            .ForMember(dest => dest.ProductQuantities,
-                opt => opt.MapFrom(src => src.ProductQuantities));
+            .ForMember(dest => dest.ProductQuantities, opt => opt.MapFrom(src => src.ProductQuantities));
 
         CreateMap<OrderDto, Order>()
             .ForMember(dest => dest.ProductQuantities, opt => opt.Ignore())
@@ -23,6 +22,11 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Id, opt => opt.Ignore());
 
         CreateMap<UpdateProductDto, Product>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore());
+
+        CreateMap<Batch, BatchDto>().ReverseMap();
+
+        CreateMap<CreateBatchDto, Batch>()
             .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 }

@@ -22,12 +22,10 @@ public class ProductRepository : IProductRepository
     {
         using var connection = GetConnection();
         var sql = @"
-        INSERT INTO products (id, shared_id, name, description, price, entry_date, expiration_date, category, warehouse_location, available_quantity) 
-        VALUES (@Id, @SharedId, @Name, @Description, @Price, @EntryDate, @ExpirationDate, @Category, @WarehouseLocation, @AvailableQuantity)";
+        INSERT INTO products (id, shared_id, name, description, price, category, warehouse_location) 
+        VALUES (@Id, @SharedId, @Name, @Description, @Price, @Category, @WarehouseLocation)";
         await connection.ExecuteAsync(sql, product);
     }
-
-
 
     public async Task<List<Product>> GetAllAsync()
     {
@@ -49,8 +47,7 @@ public class ProductRepository : IProductRepository
         using var connection = GetConnection();
         var sql = @"
             UPDATE products 
-            SET name = @Name, description = @Description, price = @Price, 
-                entry_date = @EntryDate, expiration_date = @ExpirationDate
+            SET name = @Name, description = @Description, price = @Price,
             WHERE id = @Id";
         await connection.ExecuteAsync(sql, product);
     }
