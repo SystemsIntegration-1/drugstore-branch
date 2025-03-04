@@ -8,4 +8,5 @@ public class ProductDto
     public string Description { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public string WarehouseLocation { get; set; } = string.Empty;
+    public int Price { get; set; }
 }

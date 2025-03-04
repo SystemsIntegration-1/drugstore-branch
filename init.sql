@@ -3,18 +3,18 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Crear la tabla de productos
 CREATE TABLE IF NOT EXISTS products (
-                                        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     shared_id UUID NOT NULL,
     name VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
     category VARCHAR(100) NOT NULL,
     warehouse_location VARCHAR(255) NOT NULL,
-    price NUMERIC(10,2) NOT NULL DEFAULT 0
+    price INT NOT NULL DEFAULT 0
     );
 
 -- Crear la tabla de lotes
 CREATE TABLE IF NOT EXISTS batches (
-                                       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     product_id UUID NOT NULL,
     stock INT NOT NULL,
     entry_date BIGINT NOT NULL,
@@ -22,16 +22,24 @@ CREATE TABLE IF NOT EXISTS batches (
     CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     );
 
+-- Create the orders table
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_quantities JSONB NOT NULL,
+    total_price INT NOT NULL DEFAULT 0,
+    order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Insertar datos de prueba en productos
 INSERT INTO products (shared_id, name, description, category, warehouse_location, price)
 VALUES
-    (gen_random_uuid(), 'Paracetamol', 'Analgésico y antipirético', 'Medicamento', 'A1-03', 5.99),
-    (gen_random_uuid(), 'Ibuprofeno', 'Antiinflamatorio no esteroideo', 'Medicamento', 'B2-01', 7.50),
-    (gen_random_uuid(), 'Omeprazol', 'Inhibidor de la bomba de protones', 'Medicamento', 'C4-05', 10.25),
-    (gen_random_uuid(), 'Amoxicilina', 'Antibiótico de amplio espectro', 'Medicamento', 'D3-02', 12.75),
-    (gen_random_uuid(), 'Loratadina', 'Antihistamínico para alergias', 'Medicamento', 'E2-04', 8.90),
-    (gen_random_uuid(), 'Salbutamol', 'Broncodilatador para asma', 'Medicamento', 'F5-01', 15.30),
-    (gen_random_uuid(), 'Metformina', 'Antidiabético oral', 'Medicamento', 'G1-07', 9.99);
+    (gen_random_uuid(), 'Paracetamol', 'Analgésico y antipirético', 'Medicamento', 'A1-03', 5),
+    (gen_random_uuid(), 'Ibuprofeno', 'Antiinflamatorio no esteroideo', 'Medicamento', 'B2-01', 7),
+    (gen_random_uuid(), 'Omeprazol', 'Inhibidor de la bomba de protones', 'Medicamento', 'C4-05', 10),
+    (gen_random_uuid(), 'Amoxicilina', 'Antibiótico de amplio espectro', 'Medicamento', 'D3-02', 12),
+    (gen_random_uuid(), 'Loratadina', 'Antihistamínico para alergias', 'Medicamento', 'E2-04', 8),
+    (gen_random_uuid(), 'Salbutamol', 'Broncodilatador para asma', 'Medicamento', 'F5-01', 15),
+    (gen_random_uuid(), 'Metformina', 'Antidiabético oral', 'Medicamento', 'G1-07', 9);
 
 -- Insertar lotes para los productos creados
 INSERT INTO batches (product_id, stock, entry_date, expiration_date)

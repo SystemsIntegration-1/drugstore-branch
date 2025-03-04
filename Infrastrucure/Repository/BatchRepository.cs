@@ -22,13 +22,11 @@ public class BatchRepository : IBatchRepository
     {
         using var connection = GetConnection();
         var sql = @"
-        INSERT INTO batches (id, product_id, stock, entry_date, expiration_date) 
-        VALUES (@Id, @ProductId, @Stock, @EntryDate, @ExpirationDate)";
+        INSERT INTO batches (product_id, stock, entry_date, expiration_date) 
+        VALUES (@ProductId, @Stock, @EntryDate, @ExpirationDate)";
     
         await connection.ExecuteAsync(sql, batch);
     }
-
-
 
     public async Task<List<Batch>> GetAllAsync()
     {
