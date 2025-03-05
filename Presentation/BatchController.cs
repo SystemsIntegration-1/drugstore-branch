@@ -59,4 +59,11 @@ public class BatchController : ControllerBase
         await _batchService.DeleteAsync(id);
         return NoContent();
     }
+    
+    [HttpGet("shared/{sharedId}")]
+    public async Task<IActionResult> GetBatchesBySharedId(Guid sharedId)
+    {
+        var batches = await _batchService.GetBySharedIdAsync(sharedId);
+        return Ok(batches);
+    }
 }

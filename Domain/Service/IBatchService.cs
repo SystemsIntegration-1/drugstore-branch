@@ -8,5 +8,6 @@ public interface IBatchService
     Task<BatchDto?> GetByIdAsync(Guid id);
     Task<IEnumerable<BatchDto>> GetByProductIdAsync(Guid productId);
     Task<BatchDto> CreateAsync(CreateBatchDto batchDto);
+    Task<IEnumerable<BatchDto>> GetBySharedIdAsync(Guid sharedId);
     Task DeleteAsync(Guid id);
 }

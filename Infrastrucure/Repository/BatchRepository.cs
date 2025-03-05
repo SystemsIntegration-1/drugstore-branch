@@ -51,6 +51,19 @@ public class BatchRepository : IBatchRepository
         return batches.ToList();
     }
 
+    public async Task<List<Batch>> GetBySharedIdAsync(Guid sharedId)
+    {
+        using var connection = GetConnection();
+        var sql = @"
+            SELECT b.* 
+            FROM batches b
+            JOIN products p ON b.product_id = p.id
+            WHERE p.shared_id = @SharedId";
+        
+        var batches = await connection.QueryAsync<Batch>(sql, new { SharedId = sharedId });
+        return batches.ToList();
+    }
+
     public async Task UpdateAsync(Batch batch)
     {
         using var connection = GetConnection();

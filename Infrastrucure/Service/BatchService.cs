@@ -35,6 +35,12 @@ public class BatchService : IBatchService
         return _mapper.Map<IEnumerable<BatchDto>>(batches);
     }
 
+    public async Task<IEnumerable<BatchDto>> GetBySharedIdAsync(Guid sharedId)
+    {
+        var batches = await _batchRepository.GetBySharedIdAsync(sharedId);
+        return _mapper.Map<IEnumerable<BatchDto>>(batches);
+    }
+
     public async Task<BatchDto> CreateAsync(CreateBatchDto batchDto)
     {
         var batch = _mapper.Map<Batch>(batchDto);
