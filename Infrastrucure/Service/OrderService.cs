@@ -23,10 +23,12 @@ namespace drugstore_branch.Infrastrucure.Service
             {
                 throw new ArgumentException("ProductQuantities cannot be null or empty");
             }
+
             var order = new Order
             {
                 TotalPrice = createOrderDto.TotalPrice,
-                ProductQuantities = createOrderDto.ProductQuantities
+                ProductQuantities = createOrderDto.ProductQuantities,
+                OrderDate = DateTime.UtcNow
             };
 
             var createdOrder = await _orderRepository.Create(order);

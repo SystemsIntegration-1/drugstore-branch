@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS batches (
 -- Create the orders table
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    product_quantities JSONB NOT NULL,
+    productquantities JSONB NOT NULL,
     total_price INT NOT NULL DEFAULT 0,
     order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

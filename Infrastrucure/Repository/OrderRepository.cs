@@ -3,6 +3,7 @@ using drugstore_branch.Domain.Model;
 using drugstore_branch.Domain.Repository;
 using Npgsql;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace drugstore_branch.Infrastrucure.Repository
 {
@@ -12,7 +13,8 @@ namespace drugstore_branch.Infrastrucure.Repository
 
         public OrderRepository(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration.GetConnectionString("DefaultConnection") 
+                                ?? throw new ArgumentNullException("DefaultConnection is missing in configuration.");
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 
@@ -22,21 +24,20 @@ namespace drugstore_branch.Infrastrucure.Repository
         {
             using var connection = GetConnection();
             var sql = @"
-                INSERT INTO orders (total_price)
-                VALUES (@TotalPrice)
+                INSERT INTO orders (total_price, productquantities, order_date)
+                VALUES (@TotalPrice, @ProductQuantities::jsonb, @OrderDate)
                 RETURNING id, total_price, order_date";
-            var insertedOrder = await connection.QuerySingleAsync<Order>(sql, new { entity.TotalPrice });
+
+            var insertedOrder = await connection.QuerySingleAsync<Order>(sql, new 
+            { 
+                entity.TotalPrice, 
+                ProductQuantities = JsonConvert.SerializeObject(entity.ProductQuantities), 
+                OrderDate = DateTime.UtcNow 
+            });
+
             entity.Id = insertedOrder.Id;
             entity.OrderDate = insertedOrder.OrderDate;
 
-            if (entity.ProductQuantities != null && entity.ProductQuantities.Count > 0)
-            {
-                foreach (var kvp in entity.ProductQuantities)
-                {
-                    var sqlRelation = "INSERT INTO order_products (order_id, product_id, quantity) VALUES (@OrderId, @ProductId, @Quantity)";
-                    await connection.ExecuteAsync(sqlRelation, new { OrderId = entity.Id, ProductId = kvp.Key, Quantity = kvp.Value });
-                }
-            }
             return entity;
         }
 
@@ -45,6 +46,7 @@ namespace drugstore_branch.Infrastrucure.Repository
             using var connection = GetConnection();
             var sql = "SELECT * FROM orders";
             var orders = await connection.QueryAsync<Order>(sql);
+            Console.WriteLine(sql);
 
             foreach (var order in orders)
             {
