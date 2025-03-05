@@ -2,6 +2,12 @@ using drugstore_branch.Domain.Dto;
 
 namespace drugstore_branch.Domain.Service;
 
+/* 
+ * Defines the contract for product-related operations in the service layer.
+ * Includes methods for creating products, retrieving all products, 
+ * updating product details, searching products by name, and fetching 
+ * product details by ID.
+ */
 public interface IProductService
 {
     Task<ProductDto> CreateProduct(CreateProductDto createProductDto);

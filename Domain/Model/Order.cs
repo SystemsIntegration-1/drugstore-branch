@@ -2,6 +2,10 @@ using System;
 
 namespace drugstore_branch.Domain.Model;
 
+/* 
+ * Represents an order in the system, containing product quantities, 
+ * total price, and the date the order was placed.
+ */
 public class Order : IEntity
 {
     public Guid Id { get; set; }

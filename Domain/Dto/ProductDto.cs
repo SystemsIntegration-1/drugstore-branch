@@ -1,5 +1,9 @@
 namespace drugstore_branch.Domain.Dto;
 
+/* 
+ * Data Transfer Object (DTO) for representing a product.
+ * This DTO is used to transfer product-related data within the system.
+ */
 public class ProductDto
 {
     public Guid Id { get; set; }

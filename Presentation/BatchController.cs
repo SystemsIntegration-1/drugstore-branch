@@ -4,6 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace drugstore_branch.Presentation;
 
+/* 
+ * The BatchController class is an API controller that handles HTTP requests 
+ * related to batches. It provides endpoints for creating, retrieving, updating, 
+ * and deleting batches. The controller uses the IBatchService to interact 
+ * with batch-related business logic and provides data in the form of DTOs.
+ */
 [ApiController]
 [Route("api/batches")]
 public class BatchController : ControllerBase
@@ -59,7 +65,7 @@ public class BatchController : ControllerBase
         await _batchService.DeleteAsync(id);
         return NoContent();
     }
-    
+
     [HttpGet("shared/{sharedId}")]
     public async Task<IActionResult> GetBatchesBySharedId(Guid sharedId)
     {

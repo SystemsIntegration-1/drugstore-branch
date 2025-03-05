@@ -6,10 +6,20 @@ using Microsoft.Extensions.Configuration;
 
 namespace drugstore_branch.Infrastructure.Repository;
 
+/* 
+ * This class implements the IBatchRepository interface and provides the 
+ * methods to interact with the 'batches' table in the database. 
+ * It performs CRUD operations for Batch entities using Dapper with 
+ * PostgreSQL.
+ */
 public class BatchRepository : IBatchRepository
 {
     private readonly string _connectionString;
 
+    /* 
+     * Constructor that initializes the repository with the database connection string 
+     * from the configuration.
+     */
     public BatchRepository(IConfiguration configuration)
     {
         _connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -18,6 +28,10 @@ public class BatchRepository : IBatchRepository
 
     private NpgsqlConnection GetConnection() => new NpgsqlConnection(_connectionString);
 
+    /* 
+     * Creates a new batch record in the 'batches' table.
+     * @param batch - The Batch entity to be inserted into the database.
+     */
     public async Task AddAsync(Batch batch)
     {
         using var connection = GetConnection();
@@ -28,6 +42,10 @@ public class BatchRepository : IBatchRepository
         await connection.ExecuteAsync(sql, batch);
     }
 
+    /* 
+     * Retrieves all batches from the 'batches' table.
+     * @return A list of all Batch entities in the database.
+     */
     public async Task<List<Batch>> GetAllAsync()
     {
         using var connection = GetConnection();
@@ -36,6 +54,11 @@ public class BatchRepository : IBatchRepository
         return batches.ToList();
     }
 
+     /* 
+     * Retrieves a batch by its ID.
+     * @param id - The unique identifier of the batch to retrieve.
+     * @return The Batch entity with the specified ID.
+     */
     public async Task<Batch> GetByIdAsync(Guid id)
     {
         using var connection = GetConnection();
@@ -43,6 +66,11 @@ public class BatchRepository : IBatchRepository
         return await connection.QuerySingleOrDefaultAsync<Batch>(sql, new { Id = id });
     }
 
+    /* 
+     * Retrieves all batches associated with a given product ID.
+     * @param productId - The unique identifier of the product to search batches for.
+     * @return A list of batches associated with the specified product.
+     */
     public async Task<List<Batch>> GetByProductIdAsync(Guid productId)
     {
         using var connection = GetConnection();
@@ -51,6 +79,11 @@ public class BatchRepository : IBatchRepository
         return batches.ToList();
     }
 
+    /* 
+     * Retrieves all batches associated with a given shared product ID.
+     * @param sharedId - The shared identifier of the product to search batches for.
+     * @return A list of batches associated with the specified shared product ID.
+     */
     public async Task<List<Batch>> GetBySharedIdAsync(Guid sharedId)
     {
         using var connection = GetConnection();
@@ -64,6 +97,10 @@ public class BatchRepository : IBatchRepository
         return batches.ToList();
     }
 
+    /* 
+     * Updates an existing batch record in the 'batches' table.
+     * @param batch - The Batch entity containing the updated values.
+     */
     public async Task UpdateAsync(Batch batch)
     {
         using var connection = GetConnection();
@@ -74,6 +111,10 @@ public class BatchRepository : IBatchRepository
         await connection.ExecuteAsync(sql, batch);
     }
 
+    /* 
+     * Deletes a batch record by its ID from the 'batches' table.
+     * @param id - The unique identifier of the batch to delete.
+     */
     public async Task DeleteAsync(Guid id)
     {
         using var connection = GetConnection();

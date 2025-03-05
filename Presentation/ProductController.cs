@@ -4,6 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace drugstore_branch.Presentation;
 
+/*
+ * The ProductController class is an API controller responsible for handling 
+ * HTTP requests related to products. It offers endpoints to create, retrieve, 
+ * update, and search for products. The controller interacts with the IProductService 
+ * to execute business logic and return appropriate data.
+ */
 [ApiController]
 [Route("api/products")]
 public class ProductController : ControllerBase
