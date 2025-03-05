@@ -18,9 +18,14 @@ namespace drugstore_branch.Presentation
             _mapper = mapper;
         }
         
-        [HttpPost]
+            [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDto createOrderDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var createdOrderDto = await _orderService.CreateOrder(createOrderDto);
             return CreatedAtAction(nameof(GetOrderById), new { id = createdOrderDto.Id }, createdOrderDto);
         }
@@ -28,8 +33,15 @@ namespace drugstore_branch.Presentation
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
+            try
+        {
             var orders = await _orderService.GetAllOrders();
             return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Error interno del servidor: " + ex.Message);
+        }
         }
         
         [HttpGet("by-date")]

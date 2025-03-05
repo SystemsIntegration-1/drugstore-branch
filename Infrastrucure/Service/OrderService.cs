@@ -19,13 +19,18 @@ namespace drugstore_branch.Infrastrucure.Service
         
         public async Task<OrderDto> CreateOrder(CreateOrderDto createOrderDto)
         {
+            if (createOrderDto.ProductQuantities == null || !createOrderDto.ProductQuantities.Any())
+            {
+                throw new ArgumentException("ProductQuantities cannot be null or empty");
+            }
+
             var order = new Order
             {
                 TotalPrice = createOrderDto.TotalPrice,
-                // Asigna el diccionario recibido directamente
-                ProductQuantities = createOrderDto.ProductQuantities
+                ProductQuantities = createOrderDto.ProductQuantities,
+                OrderDate = DateTime.UtcNow
             };
-            
+
             var createdOrder = await _orderRepository.Create(order);
             return _mapper.Map<OrderDto>(createdOrder);
         }
