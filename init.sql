@@ -1,7 +1,5 @@
-﻿-- Habilitar la extensión pgcrypto para generar UUIDs
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+﻿CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Crear la tabla de productos
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     shared_id UUID NOT NULL,
@@ -12,7 +10,6 @@ CREATE TABLE IF NOT EXISTS products (
     price INT NOT NULL DEFAULT 0
     );
 
--- Crear la tabla de lotes
 CREATE TABLE IF NOT EXISTS batches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     product_id UUID NOT NULL,
@@ -22,7 +19,6 @@ CREATE TABLE IF NOT EXISTS batches (
     CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     );
 
--- Create the orders table
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     productquantities JSONB NOT NULL,
@@ -30,7 +26,6 @@ CREATE TABLE IF NOT EXISTS orders (
     order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insertar datos de prueba en productos
 INSERT INTO products (shared_id, name, description, category, warehouse_location, price)
 VALUES
     (gen_random_uuid(), 'Paracetamol', 'Analgésico y antipirético', 'Medicamento', 'A1-03', 5),
@@ -41,7 +36,6 @@ VALUES
     (gen_random_uuid(), 'Salbutamol', 'Broncodilatador para asma', 'Medicamento', 'F5-01', 15),
     (gen_random_uuid(), 'Metformina', 'Antidiabético oral', 'Medicamento', 'G1-07', 9);
 
--- Insertar lotes para los productos creados
 INSERT INTO batches (product_id, stock, entry_date, expiration_date)
 SELECT id, 100, EXTRACT(EPOCH FROM now()), EXTRACT(EPOCH FROM now() + interval '2 years')
 FROM products ORDER BY id LIMIT 1

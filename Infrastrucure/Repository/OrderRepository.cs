@@ -24,7 +24,7 @@ namespace drugstore_branch.Infrastrucure.Repository
         {
             using var connection = GetConnection();
             var sql = @"
-                INSERT INTO orders (total_price, productquantities, order_date)
+                INSERT INTO orders (total_price, product_quantities, order_date)
                 VALUES (@TotalPrice, @ProductQuantities::jsonb, @OrderDate)
                 RETURNING id, total_price, order_date";
 
