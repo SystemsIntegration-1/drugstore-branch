@@ -19,6 +19,7 @@ public class BatchController : ControllerBase
     public async Task<IActionResult> GetAllBatches()
     {
         var batches = await _batchService.GetAllAsync();
+
         return Ok(batches);
     }
 
@@ -41,11 +42,12 @@ public class BatchController : ControllerBase
     {
         var batch = await _batchService.CreateAsync(createBatchDto);
 
-        var batchDto = new BatchDto
+        var batchDto = new CreateBatchDto
         {
+            ProductId = batch.ProductId,
             Stock = batch.Stock,
             EntryDate = batch.EntryDate,
-            ExpirationDate = batch.ExpirationDate
+            ExpirationDate = batch.ExpirationDate,
         };
 
         return CreatedAtAction(nameof(GetBatchById), new { id = batch.Stock }, batchDto);
@@ -56,5 +58,12 @@ public class BatchController : ControllerBase
     {
         await _batchService.DeleteAsync(id);
         return NoContent();
+    }
+    
+    [HttpGet("shared/{sharedId}")]
+    public async Task<IActionResult> GetBatchesBySharedId(Guid sharedId)
+    {
+        var batches = await _batchService.GetBySharedIdAsync(sharedId);
+        return Ok(batches);
     }
 }

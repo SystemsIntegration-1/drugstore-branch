@@ -8,6 +8,7 @@ public interface IBatchRepository
     Task<List<Batch>> GetAllAsync();
     Task<Batch> GetByIdAsync(Guid id);
     Task<List<Batch>> GetByProductIdAsync(Guid productId);
+    Task<List<Batch>> GetBySharedIdAsync(Guid sharedId);
     Task UpdateAsync(Batch batch);
     Task DeleteAsync(Guid id);
 }
